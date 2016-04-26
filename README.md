@@ -6,7 +6,30 @@
 
 Laravel 5 and Chikka VOLT IN!!!
 
+This package is using [Guzzle 6](http://docs.guzzlephp.org/en/latest/index.html).
+
+__NOTE__: Please make sure you have a balance to your chikka account.
+
+## Cost per Outgoing SMS
+|TELCO|COST|
+|---|---|
+|Globe|P0.50|
+|Smart|P0.40|
+|Sun|P0.40|
+
 ## Install
+
+#### Pre Installation
+
+Add `chikka` to your services configuration `config/services.php` and add your shortcode, key, and secrey
+
+``` php
+'chikka' => [
+    'shortcode' => env('CHIKKA_SHORTCODE'),
+    'key' => env('CHIKKA_KEY'),
+    'secret' => env('CHIKKA_SECRET'),
+],
+```
 
 Via Composer
 
@@ -14,6 +37,57 @@ Via Composer
 $ composer require jayaregalinada/chikka
 ```
 
+#### Post Installation
+
+Add the Service Provider to your `config/app.php`
+
+``` php
+Jag\Chikka\ServiceProvider::class,
+```
+
+Add the Optional Facade.
+
+``` php
+'Chikka' => Jag\Chikka\ChikkaFacade::class,
+```
+
+## Usage
+
+#### Send
+To send text message in [Async Requests](http://docs.guzzlephp.org/en/latest/quickstart.html#async-requests). Example below:
+
+``` php
+use Chikka;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
+
+...
+
+$send = Chikka::send('639XXXXXXX', 'I LOVE YOU!');
+$send->then(
+    function (ResponseInterface $res) {
+        echo $res->getStatusCode() . "\n";
+    },
+    function (RequestException $e) {
+        echo $e->getMessage() . "\n";
+        echo $e->getRequest()->getMethod();
+    }
+);
+
+...
+```
+
+However if you want immediate sending. This will thrown `GuzzleHttp\Exception\ClientException`. Example below:
+
+``` php
+use Chikka;
+...
+
+Chikka::sendNow('639XXXXXXX', 'I LOVE YOU!');
+
+...
+
+```
 
 ## Change log
 
