@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
-[![Total Downloads][ico-downloads]][link-downloads]
+[![Total Downloads][ico-downloads]][link-packagist]
 
 Laravel 5 and Chikka VOLT IN!!!
 
@@ -19,19 +19,7 @@ __NOTE__: Please make sure you have a balance to your chikka account.
 
 ## Install
 
-#### Pre Installation
-
-Add `chikka` to your services configuration `config/services.php` and add your shortcode, key, and secrey
-
-``` php
-'chikka' => [
-    'shortcode' => env('CHIKKA_SHORTCODE'),
-    'key' => env('CHIKKA_KEY'),
-    'secret' => env('CHIKKA_SECRET'),
-],
-```
-
-Via Composer
+### Via Composer
 
 ``` bash
 $ composer require jayaregalinada/chikka
@@ -131,6 +119,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [link-travis]: https://travis-ci.org/jag/chikka
 [link-scrutinizer]: https://scrutinizer-ci.com/g/jag/chikka/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/jag/chikka
-[link-downloads]: https://packagist.org/packages/jag/chikka
 [link-author]: https://github.com/jayaregalinada
 [link-contributors]: ../../contributors
