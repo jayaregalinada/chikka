@@ -12,11 +12,6 @@ class Chikka
     protected $app;
 
     /**
-     * @var \Illuminate\Redis\Database
-     */
-    protected $redis;
-
-    /**
      * @var \GuzzleHttp\Client
      */
     protected $client;
@@ -26,7 +21,7 @@ class Chikka
      *
      * @var string
      */
-    protected $url = 'https://post.chikka.com/smsapi/request';
+    protected $url;
 
     /**
      * Create an instance for chikka.
@@ -34,29 +29,14 @@ class Chikka
      * @param \Illuminate\Foundation\Application $app
      * @param \GuzzleHttp\Client $client
      */
-    public function __construct($app, $client)
+    public function __construct($app, $client, $uri = null)
     {
         $this->app = $app;
-        $this->checkIfConfigurationExist();
-        $this->redis = $app['redis'];
+        $this->url = (is_null) ? config('chikka.uri') : $uri;
         $this->client = new $client([
             'base_uri' => $this->url,
-            'timeout' => 180
+            'timeout' => config('chikka.timeout'),
         ]);
-    }
-
-    /**
-     * Check if the configuration is exists in the services.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return void
-     */
-    protected function checkIfConfigurationExist()
-    {
-        if (! $this->app['config']->has('services.chikka')) {
-            throw new InvalidArgumentException('Please add chikka to your services configuration');
-        }
     }
 
     /**
@@ -85,23 +65,6 @@ class Chikka
         return (new Sender($this))->sendNow($mobileNumber, $message, $messageId);
     }
 
-
-    /**
-     * Get the configuration but throws error if not exists.
-     *
-     * @param  string $key
-     *
-     * @return string
-     */
-    public function getConfiguration($key)
-    {
-        if (! $this->app['config']->has('services.chikka.' . $key)) {
-            throw new InvalidArgumentException("Please include your [$key] in your Chikka configuration");
-        }
-
-        return config('services.chikka.' . $key);
-    }
-
     /**
      * Gets the value of app.
      *
@@ -122,30 +85,6 @@ class Chikka
     protected function setApp($app)
     {
         $this->app = $app;
-
-        return $this;
-    }
-
-    /**
-     * Gets the value of redis.
-     *
-     * @return mixed
-     */
-    public function getRedis()
-    {
-        return $this->redis;
-    }
-
-    /**
-     * Sets the value of redis.
-     *
-     * @param mixed $redis the redis
-     *
-     * @return self
-     */
-    protected function setRedis($redis)
-    {
-        $this->redis = $redis;
 
         return $this;
     }

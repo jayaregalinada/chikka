@@ -6,9 +6,10 @@
         "jag",
         "chikka",
         "jayaregalinada",
-        "philippines"
+        "philippines",
+        "sms"
     ],
-    "homepage": "https://github.com/jag/chikka",
+    "homepage": "https://github.com/jayaregalinada/chikka",
     "license": "MIT",
     "authors": [
         {
@@ -19,34 +20,23 @@
         }
     ],
     "require": {
-        "php" : "~5.5|~7.0",
-        "illuminate/support": ">=5.1",
-        "illuminate/database": ">=5.1",
-        "doctrine/dbal": "^2.5",
-        "predis/predis": "~1.0",
-        "guzzlehttp/guzzle": "~6.0"
+        "php" : ">=5.6.4",
+        "illuminate/support": "~5.1",
+        "guzzlehttp/guzzle": "~6"
     },
     "require-dev": {
-        "phpunit/phpunit" : "4.*",
-        "scrutinizer/ocular": "~1.1",
-        "squizlabs/php_codesniffer": "~2.3"
+        "phpunit/phpunit": "~4.0|~5.0"
     },
     "autoload": {
         "psr-4": {
             "Jag\\Chikka\\": "src"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Jag\\Chikka\\": "tests"
-        }
-    },
-    "scripts": {
-        "test": "phpunit"
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "0.1-dev"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
