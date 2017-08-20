@@ -1,22 +1,36 @@
 # Changelog
 
-All Notable changes to `:package_name` will be documented in this file.
+All Notable changes to [jag/chikka][link-packagist] will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## NEXT - YYYY-MM-DD
+## [Unreleased]
+- Add handler for receive SMS.
+- Add handler for notification
+- Add handler for reply to an SMS.
+- Add and improved events and listeners.
+- Can use without laravel.
+- Create test either phpspec or phpunit.
+
+## [0.1.1] - 2017-08-20
 
 ### Added
-- Nothing
-
-### Deprecated
-- Nothing
+- Response for sent message.
+- Sender form.
+- Multiple error Exceptions.
+- Sending Events.
+- Sender Interface for basis.
 
 ### Fixed
-- Nothing
+- Package name.
+- Minimum stability.
+
+### Changed 
+- Use the `.env` instead of creating to services configuration.
+- Improved `Chikka::send()` method.
 
 ### Removed
-- Nothing
+- Container for `chikka.client`.
+- Receiver class instead wait for the update.
 
-### Security
-- Nothing
+[link-packagist]: https://packagist.org/packages/jag/chikka
