@@ -2,9 +2,17 @@
 
 namespace Jag\Chikka;
 
-use InvalidArgumentException;
+use Jag\Chikka\Contracts\SenderInterface;
+use Jag\Chikka\Exceptions\BadRequestException;
+use Jag\Chikka\Exceptions\Exception;
+use Jag\Chikka\Exceptions\MethodNotAllowedException;
+use Jag\Chikka\Exceptions\NotFoundException;
+use Jag\Chikka\Exceptions\UnauthorizedException;
+use Jag\Chikka\Forms\SenderForm;
+use Jag\Chikka\Responses\SentResponse;
+use Psr\Http\Message\ResponseInterface;
 
-class Sender
+class Sender implements SenderInterface
 {
     /**
      * @var \Jag\Chikka\Chikka
@@ -17,19 +25,28 @@ class Sender
     protected $client;
 
     /**
-     * Message allowed characters.
-     *
      * @var integer
      */
-    protected $messageLimit = 420;
+    protected $messageLimit;
 
     /**
-     * @param \Jag\Chikka\Chikka $chikka
+     * @var string
+     */
+    protected $messageType = 'SEND';
+
+    /**
+     * @var \Jag\Chikka\Forms\SenderForm
+     */
+    protected $requestForm;
+
+    /**
+     * @param  \Jag\Chikka\Chikka $chikka
      */
     public function __construct(Chikka $chikka)
     {
         $this->chikka = $chikka;
         $this->client = $chikka->getClient();
+        $this->messageLimit = $chikka::MESSAGE_LIMIT;
     }
 
     /**
@@ -41,11 +58,12 @@ class Sender
      *
      * @return \GuzzleHttp\Promise\Promise
      */
-    public function send($mobileNumber, $message, $messageId = null)
+    public function sendAsync($mobileNumber, $message, $messageId = null)
     {
-        return $this->client->requestAsync('POST', '', ['form_params' => $this->createBody($mobileNumber, $message, $messageId)]);
-    }
+        $this->requestForm = new SenderForm($mobileNumber, $message, $messageId);
 
+        return $this->client->requestAsync('POST', '', ['form_params' => $this->requestForm->get()]);
+    }
 
     /**
      * Send a message immediately.
@@ -54,50 +72,52 @@ class Sender
      * @param  string $message
      * @param  string $messageId
      *
-     * @return \GuzzleHttp\Psr7\Response
+     * @throws inherits \Jag\Chikka\Exceptions\Exception
+     *
+     * @return \Jag\Chikka\Responses\SentResponse
      */
-    public function sendNow($mobileNumber, $message, $messageId = null)
+    public function send($mobileNumber, $message, $messageId = null)
     {
-        return $this->client->request('POST', '', ['form_params' => $this->createBody($mobileNumber, $message, $messageId)]);
+        return $this->sendAsync($mobileNumber, $message, $messageId)
+        ->then(
+            function (ResponseInterface $response) {
+                return new SentResponse($response, $this->requestForm);
+            },
+            function ($exception) {
+                return $this->throwError($exception);
+            }
+        )->wait();
     }
 
     /**
-     * Create a body to send.
+     * Throw and error based on [https://api.chikka.com/docs/handling-messages#send-sms].
      *
-     * @param  string $mobileNumber
-     * @param  string $message
-     * @param  string $messageId
+     * @param  inherits \GuzzleHttp\Exception\TransferException  $exception
      *
-     * @return array
+     * @throws inherits \Jag\Chikka\Exceptions\Exception
      */
-    protected function createBody($mobileNumber, $message, $messageId = null)
+    protected function throwError($exception)
     {
-        $this->checkMessageLength($message);
+        switch ($exception->getResponse()->getStatusCode()) {
+            case 400:
+                throw new BadRequestException($exception);
+                break;
 
-        return [
-            'message_type' => 'SEND',
-            'mobile_number' => $mobileNumber,
-            'shortcode' => $this->chikka->getConfiguration('shortcode'),
-            'message_id' => (is_null($messageId) ? md5($this->chikka->getConfiguration('shortcode') . '_' . $mobileNumber . '_' . time()) : $messageId),
-            'message' => e($message),
-            'client_id' => $this->chikka->getConfiguration('key'),
-            'secret_key' => $this->chikka->getConfiguration('secret')
-        ];
-    }
+            case 401:
+                throw new UnauthorizedException($exception);
+                break;
 
-    /**
-     * Check message if in the maximum length.
-     *
-     * @param  string $message
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return void
-     */
-    protected function checkMessageLength($message)
-    {
-        if (strlen($message) > $this->messageLimit) {
-            throw new InvalidArgumentException('Cannot send more than '. $this->messageLimit .' characters');
+            case 403:
+                throw new MethodNotAllowedException($exception);
+                break;
+
+            case 404:
+                throw new NotFoundException($exception);
+                break;
+
+            default:
+                throw new Exception($exception);
+                break;
         }
     }
 }
