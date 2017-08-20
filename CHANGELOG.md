@@ -32,5 +32,6 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Removed
 - Container for `chikka.client`.
 - Receiver class instead wait for the update.
+- No more samples.
 
 [link-packagist]: https://packagist.org/packages/jag/chikka
