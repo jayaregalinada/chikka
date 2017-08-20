@@ -1,4 +1,4 @@
-# chikka
+# Chikka
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
@@ -22,11 +22,12 @@ __NOTE__: Please make sure you have a balance to your chikka account.
 ### Via Composer
 
 ``` bash
-$ composer require jayaregalinada/chikka
+$ composer require jag/chikka
 ```
 
-#### Post Installation
+## Post Installation
 
+#### Add to Configuration
 Add the Service Provider to your `config/app.php`
 
 ``` php
@@ -39,55 +40,39 @@ Add the Optional Facade.
 'Chikka' => Jag\Chikka\ChikkaFacade::class,
 ```
 
+#### Add to Environment 
+Add the environment configuration to your `.env` file
+
+```
+CHIKKA_SHORTCODE=YOUR_CHIKKA_SHORTCODE
+CHIKKA_KEY=YOUR_CHIKKA_CLIENT_ID
+CHIKKA_SECRET=YOUR_CHIKKA_SECRET_KEY
+```
+
+You may also define other environment configuration such as:
+```
+CHIKKA_URI=https://post.chikka.com/smsapi/request
+CHIKKA_TIMEOUT=180
+```
+
 ## Usage
 
 #### Send
-To send text message in [Async Requests](http://docs.guzzlephp.org/en/latest/quickstart.html#async-requests). Example below:
+To send check the example below:
 
 ``` php
-use Chikka;
-use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\ResponseInterface;
+use Jag\Chikka\ChikkaFacade as Chikka;
 
 ...
 
-$send = Chikka::send('639XXXXXXX', 'I LOVE YOU!');
-$send->then(
-    function (ResponseInterface $res) {
-        echo $res->getStatusCode() . "\n";
-    },
-    function (RequestException $e) {
-        echo $e->getMessage() . "\n";
-        echo $e->getRequest()->getMethod();
-    }
-);
+Chikka::send('639XXXXXXX', 'I LOVE YOU!');
 
 ...
-```
-
-However if you want immediate sending. This will thrown `GuzzleHttp\Exception\ClientException`. Example below:
-
-``` php
-use Chikka;
-...
-
-Chikka::sendNow('639XXXXXXX', 'I LOVE YOU!');
-
-...
-
 ```
 
 ## Change log
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
-
-## Testing
-
-``` bash
-$ composer test
-```
-
+Please check [CHANGELOG](CHANGELOG.md) for more information on what has recently changed.
 
 ## Contributing
 
