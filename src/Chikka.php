@@ -3,9 +3,15 @@
 namespace Jag\Chikka;
 
 use InvalidArgumentException;
+use Jag\Chikka\Contracts\SenderInterface;
 
-class Chikka
+class Chikka implements SenderInterface
 {
+    /**
+     * Maximum message limit.
+     */
+    const MESSAGE_LIMIT = 420;
+
     /**
      * @var \Illuminate\Foundation\Application
      */
@@ -24,19 +30,25 @@ class Chikka
     protected $url;
 
     /**
+     * @var array
+     */
+    public $config;
+
+    /**
      * Create an instance for chikka.
      *
-     * @param \Illuminate\Foundation\Application $app
-     * @param \GuzzleHttp\Client $client
+     * @param  \Illuminate\Foundation\Application $app
+     * @param  \GuzzleHttp\Client $client
      */
     public function __construct($app, $client, $uri = null)
     {
         $this->app = $app;
-        $this->url = (is_null) ? config('chikka.uri') : $uri;
+        $this->url = (is_null($uri)) ? $app['config']->get('chikka.uri') : $uri;
         $this->client = new $client([
             'base_uri' => $this->url,
-            'timeout' => config('chikka.timeout'),
+            'timeout' => $app['config']->get('chikka.timeout')
         ]);
+        $this->config = $app['config']->get('chikka');
     }
 
     /**
@@ -50,7 +62,7 @@ class Chikka
      */
     public function send($mobileNumber, $message, $messageId = null)
     {
-        return (new Sender($this))->send($mobileNumber, $message, $messageId);
+        return $this->app['chikka.sender']->send($mobileNumber, $message, $messageId);
     }
 
     /**
@@ -60,9 +72,9 @@ class Chikka
      * @param  string $messageId    [description]
      * @return [type]               [description]
      */
-    public function sendNow($mobileNumber, $message, $messageId = null)
+    public function sendAsync($mobileNumber, $message, $messageId = null)
     {
-        return (new Sender($this))->sendNow($mobileNumber, $message, $messageId);
+        return $this->app['chikka.sender']->sendAsync($mobileNumber, $message, $messageId);
     }
 
     /**
@@ -73,20 +85,6 @@ class Chikka
     public function getApp()
     {
         return $this->app;
-    }
-
-    /**
-     * Sets the value of app.
-     *
-     * @param mixed $app the app
-     *
-     * @return self
-     */
-    protected function setApp($app)
-    {
-        $this->app = $app;
-
-        return $this;
     }
 
     /**
@@ -107,19 +105,5 @@ class Chikka
     public function getClient()
     {
         return $this->client;
-    }
-
-    /**
-     * Sets the value of client.
-     *
-     * @param mixed $client the client
-     *
-     * @return self
-     */
-    protected function setClient($client)
-    {
-        $this->client = $client;
-
-        return $this;
     }
 }
