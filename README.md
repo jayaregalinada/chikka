@@ -78,7 +78,6 @@ Please check [CHANGELOG](CHANGELOG.md) for more information on what has recently
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details.
 
-
 ## Security
 
 If you discover any security related issues, please email jayaregalinada@gmail.com instead of using the issue tracker.

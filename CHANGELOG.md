@@ -12,6 +12,11 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Can use without laravel.
 - Create test either phpspec or phpunit.
 
+## [0.1.2] - 2017-08-21
+
+### Fixed
+- Not found description property on Exception.
+
 ## [0.1.1] - 2017-08-20
 
 ### Added

@@ -33,6 +33,6 @@ class Exception extends \RuntimeException
         $this->statusCode = $exception->getResponse()->getStatusCode();
         $this->body = json_decode($exception->getResponse()->getBody());
         $this->bodyArray = json_decode($exception->getResponse()->getBody(), true);
-        parent::__construct($this->body->description, 0, $exception);
+        parent::__construct($this->body->message, 0, $exception);
     }
 }
