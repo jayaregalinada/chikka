@@ -36,6 +36,14 @@
     "extra": {
         "branch-alias": {
             "dev-master": "0.1-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Jag\\Chikka\\ServiceProvider"
+            ],
+            "aliases": {
+                "Chikka": "Jag\\Chikka\\ChikkaFacade"
+            }
         }
     },
     "minimum-stability": "dev",
