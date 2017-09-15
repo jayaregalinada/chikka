@@ -68,9 +68,12 @@ class SenderForm
     public function get($key = null)
     {
         $attributes = [
-            'message_type' => $this->messageType,
-            'mobile_number' => $this->mobile,
-            'message_id' => $this->id,
+            'message_type' => $this->messageType, // NOTE: Deprecated use `messageType` instead
+            'messageType' => $this->messageType,
+            'mobile_number' => $this->mobile, // NOTE: Deprecated use `mobile` instead
+            'mobile' => $this->mobile,
+            'message_id' => $this->id, // NOTE: Deprecated use `id` instead
+            'id' => $this->id,
             'message' => $this->message,
             'shortcode' => $this->config['shortcode'],
             'client_id' => $this->config['key'],
